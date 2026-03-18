@@ -29,6 +29,11 @@ on:
       - '.github/FUNDING.yml'
       - '.github/ISSUE_TEMPLATE/**'
 
+env:
+  NEWPIPE_GRADLE_REMOTE_CACHE_URL: ${{ secrets.NEWPIPE_GRADLE_REMOTE_CACHE_URL }}
+  NEWPIPE_GRADLE_REMOTE_CACHE_USER: ${{ secrets.NEWPIPE_GRADLE_REMOTE_CACHE_USER }}
+  NEWPIPE_GRADLE_REMOTE_CACHE_TOKEN: ${{ secrets.NEWPIPE_GRADLE_REMOTE_CACHE_TOKEN }}
+
 jobs:
   build-and-test-jvm:
     runs-on: ubuntu-latest
