@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: ${{ github.workflow }}-master
+  group: ${{ github.workflow }}-dev
   cancel-in-progress: false
 
 jobs:
@@ -18,10 +18,10 @@ jobs:
     if: github.repository == 'sergioboi/NewPipe'
 
     steps:
-      - name: Checkout master
+      - name: Checkout dev
         uses: actions/checkout@v6
         with:
-          ref: master
+          ref: dev
           fetch-depth: 0
           persist-credentials: false
 
@@ -33,31 +33,31 @@ jobs:
       - name: Add upstream remote
         run: git remote add upstream https://github.com/TeamNewPipe/NewPipe.git
 
-      - name: Fetch upstream master
-        run: git fetch upstream master
+      - name: Fetch upstream dev
+        run: git fetch upstream dev
 
       - name: Check if sync is needed
         id: sync_check
         run: |
-          if git merge-base --is-ancestor upstream/master HEAD; then
+          if git merge-base --is-ancestor upstream/dev HEAD; then
             echo "up_to_date=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "up_to_date=false" >> "$GITHUB_OUTPUT"
 
-      - name: Merge upstream master
+      - name: Merge upstream dev
         if: steps.sync_check.outputs.up_to_date != 'true'
         run: |
-          git merge --no-ff --no-edit upstream/master || {
-            echo "Merge conflict while syncing upstream/master into master." >&2
+          git merge --no-ff --no-edit upstream/dev || {
+            echo "Merge conflict while syncing upstream/dev into dev." >&2
             exit 1
           }
 
-      - name: Push merged master
+      - name: Push merged dev
         if: steps.sync_check.outputs.up_to_date != 'true'
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/sergioboi/NewPipe.git
-          git push origin HEAD:master
+          git push origin HEAD:dev
